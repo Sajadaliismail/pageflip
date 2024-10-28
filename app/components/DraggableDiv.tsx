@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import React, { Component, MouseEvent, useRef, useState } from "react";
+import React, { MouseEvent, useRef, useState } from "react";
 import Notes, { NotesInterface } from "./Notes";
 
 interface DraggableDivProps {
@@ -11,6 +11,7 @@ interface DraggableDivProps {
 const DraggableDiv: React.FC<DraggableDivProps> = ({ stickyNote }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 100, y: 100 });
+  // eslint-disable-next-line
   const dragItem = useRef<any>(null);
   const [notes, setNotes] = useState<NotesInterface[]>([]);
 
@@ -76,7 +77,7 @@ const DraggableDiv: React.FC<DraggableDivProps> = ({ stickyNote }) => {
           <Plus className="w-24 h-24" />{" "}
         </div>
       ) : (
-        notes.map((notes, idx) => (
+        notes.map((notes) => (
           <Notes content={notes.content} key={notes.key} addNotes={addNotes} />
         ))
       )}
