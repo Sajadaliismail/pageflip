@@ -37,6 +37,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const spotlightRef = useRef<HTMLDivElement | null>(null);
   /* eslint-disable react-hooks/exhaustive-deps */
+
   useEffect(() => {
     const innerWidth = window.innerWidth;
 
@@ -83,7 +84,7 @@ export default function Home() {
   };
 
   const handleResetView = () => {
-    setSize({ height: 700, width: 575 });
+    setSize({ height: 580, width: 475 });
   };
 
   const handleZoomOut = () => {
@@ -168,7 +169,7 @@ export default function Home() {
           ref={spotlightRef}
           className="spotlight"
           style={{
-            zIndex: 1000,
+            zIndex: 500,
             width: "300px",
             height: "300px",
             backgroundColor: "transparent",
@@ -177,7 +178,7 @@ export default function Home() {
         ></div>
         <DraggableDiv stickyNote={stickyNote}></DraggableDiv>
         <div
-          className="relative mx-auto flex justify-center "
+          className="relative mx-auto flex justify-center my-auto "
           style={{ width: size.width * 2 }}
         >
           <HTMLFlipBook
@@ -247,7 +248,7 @@ export default function Home() {
           </button>
         </div>
       </div>
-      <div className="absolute bottom-0 z-10 w-full">
+      <div className="absolute bottom-0 z-10 w-full" style={{ zIndex: 1000 }}>
         <div className=" h-14 w-full md:w-[1200px] relative mx-auto ">
           <div
             className="absolute bottom-6 left-0 h-20 w-full bg-[#182d06]  shadow-2xl"
