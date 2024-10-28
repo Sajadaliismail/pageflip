@@ -12,10 +12,12 @@ import {
   Pause,
   Play,
   RotateCcw,
+  StickyNote,
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
 import Button from "./components/Button";
+import DraggableDiv from "./components/DraggableDiv";
 
 export default function Home() {
   const pageLimit = new Array(100).fill(0).map((_, index) => index + 1);
@@ -25,14 +27,30 @@ export default function Home() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [spotlight, setSpotLight] = useState<boolean>(false);
   const [bookMark, setBookMark] = useState<null | number>(null);
+  const [stickyNote, setStickyNote] = useState<boolean>(false);
   const [size, setSize] = useState<{ width: number; height: number }>({
-    width: 575,
-    height: 700,
+    width: 475,
+    height: 580,
   });
-  const aspectRatio = 575 / 700;
+  const aspectRatio = 475 / 580;
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const spotlightRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const innerWidth = window.innerWidth;
+
+    if (innerWidth < size.width) {
+      const calculatedWidth = innerWidth * 0.4;
+
+      const calculatedHeight = calculatedWidth / aspectRatio;
+
+      setSize({
+        width: calculatedWidth,
+        height: calculatedHeight,
+      });
+    }
+  }, []);
 
   const handleMouseMove = (event: MouseEvent) => {
     if (spotlightRef.current) {
@@ -69,6 +87,8 @@ export default function Home() {
   };
 
   const handleZoomOut = () => {
+    console.log(size);
+
     setSize((prev) => {
       const newWidth = Math.max(prev.width - 50, 100);
       const newHeight = newWidth / aspectRatio;
@@ -97,6 +117,9 @@ export default function Home() {
     }
   };
 
+  const toggleStickyNote = () => {
+    setStickyNote((prev) => !prev);
+  };
   const handleSpotlight = () => {
     setSpotLight((prev) => !prev);
   };
@@ -132,7 +155,7 @@ export default function Home() {
   return (
     <>
       <div
-        className="h-[100vh] items-center flex flex-col overflow-scroll p-5 relative"
+        className="h-[100vh] items-center flex flex-col overflow-scroll p-5 relative w-[100vw]"
         style={{ scrollbarWidth: "none" }}
       >
         <Button
@@ -152,6 +175,7 @@ export default function Home() {
             display: spotlight ? "block" : "none",
           }}
         ></div>
+        <DraggableDiv stickyNote={stickyNote}></DraggableDiv>
         <div
           className="relative mx-auto flex justify-center "
           style={{ width: size.width * 2 }}
@@ -174,13 +198,13 @@ export default function Home() {
             maxWidth={1000}
             minHeight={400}
             minWidth={275}
+            width={size.width}
+            height={size.height}
             startPage={currentPage}
             className="shadow-2xl rounded-md relative w-full"
             key={`${size.height} ${size.width}`}
             drawShadow={true}
             ref={bookRef}
-            width={size.width}
-            height={size.height}
             showCover={true}
             size="fixed"
             maxShadowOpacity={0.5}
@@ -206,8 +230,8 @@ export default function Home() {
               <Image
                 className="absolute -left-14 bottom-2/4 hover:scale-110"
                 src={Previous}
-                width={70}
-                height={70}
+                width={size.width / 7}
+                height={size.width / 7}
                 alt="Previous"
               ></Image>
             </button>
@@ -216,22 +240,22 @@ export default function Home() {
             <Image
               className="absolute -right-14 bottom-2/4 hover:scale-110"
               src={Next}
-              width={70}
-              height={70}
+              width={size.width / 7}
+              height={size.width / 7}
               alt="next"
             ></Image>
           </button>
         </div>
       </div>
       <div className="absolute bottom-0 z-10 w-full">
-        <div className=" h-14 w-[1200px] relative mx-auto ">
+        <div className=" h-14 w-full md:w-[1200px] relative mx-auto ">
           <div
             className="absolute bottom-6 left-0 h-20 w-full bg-[#182d06]  shadow-2xl"
             style={{ clipPath: "polygon(9% 2%, 91% 2%, 101% 100%, -1% 100%)" }}
           ></div>
 
           <div
-            className="absolute bottom-8 left-0 h-20 w-full bg-[#2d5906] flex flex-row justify-center gap-4 py-2"
+            className="absolute bottom-8 left-0 h-20 w-full bg-[#2d5906] flex flex-row justify-center md:gap-4 py-2"
             style={{ clipPath: "polygon(10% 0, 90% 0, 100% 100%, 0 100%)" }}
           >
             <Button onClick={handleAuto} icon={autoplay ? Pause : Play} />
@@ -241,6 +265,7 @@ export default function Home() {
             <Button onClick={flipToPage} icon={BookMarked} />
             <Button onClick={handleSpotlight} icon={Lightbulb} />
             <Button onClick={handleFullscreenToggle} icon={FullscreenIcon} />
+            <Button onClick={toggleStickyNote} icon={StickyNote} />
           </div>
         </div>
       </div>

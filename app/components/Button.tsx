@@ -20,7 +20,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`bg-yellow-500 rounded-full w-12 h-12 hover:animate-bounce flex items-center justify-center ${additionalClasses}`}
+      className={`bg-yellow-500 rounded-full md:w-12 md:h-12 h-8 w-8 hover:animate-bounce flex items-center justify-center ${additionalClasses}`}
       style={{ boxShadow: "0 40px 30px rgba(0, 0, 0, 0.8)", ...style }}
     >
       {Icon && <Icon className="text-orange-800" />}
