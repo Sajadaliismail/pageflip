@@ -1,13 +1,6 @@
 "use client";
 
-import { Download } from "lucide-react";
-import React, {
-  HtmlHTMLAttributes,
-  MouseEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
 
 interface DraggableAnnotationProps {
   annotations: boolean;

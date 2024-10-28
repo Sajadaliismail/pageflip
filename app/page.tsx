@@ -223,10 +223,10 @@ export default function Home() {
             swipeDistance={5}
             useMouseEvents={true}
             usePortrait={true}
-            onChangeState={(e) => null}
-            onChangeOrientation={(e) => null}
-            onInit={(e) => null}
-            onUpdate={(e) => null}
+            onChangeState={() => null}
+            onChangeOrientation={() => null}
+            onInit={() => null}
+            onUpdate={() => null}
             autoSize={true}
             style={{}}
             clickEventForward={true}

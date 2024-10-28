@@ -20,7 +20,6 @@ const DraggableRecorder: React.FC<DraggableRecorderProps> = ({
     y: 100,
   });
   const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [audioURL, setAudioURL] = useState<string | null>(null);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -48,8 +47,10 @@ const DraggableRecorder: React.FC<DraggableRecorderProps> = ({
   const handleMouseUp = () => {
     setIsDragging(false);
   };
-
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
+    console.log(error);
+
     return () => {
       if (mediaRecorderRef.current) {
         mediaRecorderRef.current.stop();
@@ -87,7 +88,6 @@ const DraggableRecorder: React.FC<DraggableRecorderProps> = ({
           const audioURL = URL.createObjectURL(audioBlob);
           setAudioUrlArray((prev: string[]) => [...prev, audioURL]);
 
-          setAudioURL(audioURL);
           stream.getTracks().forEach((track) => track.stop());
           mediaRecorderRef.current = null;
         };
