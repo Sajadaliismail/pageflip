@@ -114,6 +114,7 @@ export default function Home() {
       document.exitFullscreen();
     }
   };
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (bookRef.current) {
       bookRef.current.pageFlip()?.flip(currentPage);
