@@ -36,7 +36,7 @@ export default function Home() {
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const spotlightRef = useRef<HTMLDivElement | null>(null);
-
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     const innerWidth = window.innerWidth;
 
