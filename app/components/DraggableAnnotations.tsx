@@ -20,6 +20,8 @@ const DraggableAnnotation: React.FC<DraggableAnnotationProps> = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState("#000000");
+  const [brushSize, setBrushSize] = useState(5);
+  const [brushShape, setBrushShape] = useState<"round" | "square">("round");
 
   const startDrawing = (e: MouseEvent) => {
     setIsDrawing(true);
@@ -42,8 +44,17 @@ const DraggableAnnotation: React.FC<DraggableAnnotationProps> = ({
 
     ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
     ctx.strokeStyle = color;
-    ctx.lineWidth = 5;
+    ctx.lineWidth = brushSize;
     ctx.stroke();
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
   const stopDrawing = () => {
@@ -62,7 +73,7 @@ const DraggableAnnotation: React.FC<DraggableAnnotationProps> = ({
     if (!ctx) return;
 
     ctx.lineJoin = "round";
-    ctx.lineCap = "round";
+    ctx.lineCap = brushShape;
   }, []);
 
   const handleMouseDown = (e: MouseEvent) => {
@@ -115,16 +126,43 @@ const DraggableAnnotation: React.FC<DraggableAnnotationProps> = ({
         Click here to move
       </div>
       <div className="flex flex-col items-center">
-        <input
-          type="color"
-          value={color}
-          onChange={handleColorChange}
-          className="mb-2"
-        />
+        <div className="flex flex-row justify-evenly w-full">
+          <input
+            type="range"
+            min={1}
+            max={25}
+            value={brushSize}
+            onChange={(e) => setBrushSize(Number(e.target.value))}
+          ></input>
+          <input
+            type="color"
+            value={color}
+            onChange={handleColorChange}
+            className="mb-2"
+          />
+          <button
+            className="bg-slate-300 px-2 rounded-md"
+            onClick={clearCanvas}
+          >
+            Clear
+          </button>
+          <button
+            className="bg-slate-300 px-2 rounded-md"
+            onClick={() => setBrushShape("square")}
+          >
+            Square
+          </button>
+          <button
+            className="bg-slate-300 px-2 rounded-md"
+            onClick={() => setBrushShape("round")}
+          >
+            Round
+          </button>
+        </div>
         <canvas
           ref={canvasRef}
-          width={500}
-          height={500}
+          width={630}
+          height={280}
           className="border border-gray-400"
           onMouseDown={startDrawing}
           onMouseMove={draw}
