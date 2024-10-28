@@ -2,8 +2,8 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import HTMLFlipBook from "react-pageflip";
-import Next from "./icons/next.svg";
-import Previous from "./icons/previousArrow.svg";
+import Next from "./icons/share-arrow.png";
+import Previous from "./icons/share-prev.png";
 import {
   Bookmark,
   BookMarked,
@@ -15,9 +15,16 @@ import {
   StickyNote,
   ZoomIn,
   ZoomOut,
+  Mic,
+  HomeIcon,
+  TableOfContents,
+  SquarePen,
+  Search,
 } from "lucide-react";
 import Button from "./components/Button";
 import DraggableDiv from "./components/DraggableDiv";
+import DraggableRecorder from "./components/DraggableRecorder";
+import DraggableAnnotation from "./components/DraggableAnnotations";
 
 export default function Home() {
   const pageLimit = new Array(100).fill(0).map((_, index) => index + 1);
@@ -28,6 +35,10 @@ export default function Home() {
   const [spotlight, setSpotLight] = useState<boolean>(false);
   const [bookMark, setBookMark] = useState<null | number>(null);
   const [stickyNote, setStickyNote] = useState<boolean>(false);
+  const [recorder, setRecorder] = useState<boolean>(false);
+  const [annotations, setAnnotations] = useState<boolean>(false);
+  const [audioUrlArray, setAudioUrlArray] = useState<string[]>([]);
+  const [pageSearch, setPageSearch] = useState<number | string>("");
   const [size, setSize] = useState<{ width: number; height: number }>({
     width: 475,
     height: 580,
@@ -88,8 +99,6 @@ export default function Home() {
   };
 
   const handleZoomOut = () => {
-    console.log(size);
-
     setSize((prev) => {
       const newWidth = Math.max(prev.width - 50, 100);
       const newHeight = newWidth / aspectRatio;
@@ -118,11 +127,31 @@ export default function Home() {
     }
   };
 
+  const goToPage = async (page: number) => {
+    await bookRef.current.pageFlip().flip(page);
+  };
+
   const toggleStickyNote = () => {
     setStickyNote((prev) => !prev);
   };
+  const toggleAnnotations = () => {
+    setAnnotations((prev) => !prev);
+  };
+  const toggleRecorder = () => {
+    setRecorder((prev) => !prev);
+  };
   const handleSpotlight = () => {
     setSpotLight((prev) => !prev);
+  };
+
+  const handleSearch = async () => {
+    if (!pageSearch) return null;
+    if (isNaN(Number(pageSearch))) return null;
+    goToPage(Number(pageSearch)).then(() => {
+      setTimeout(() => {
+        setPageSearch("");
+      }, 1000);
+    });
   };
 
   const handleBookMark = () => {
@@ -160,9 +189,10 @@ export default function Home() {
         style={{ scrollbarWidth: "none" }}
       >
         <Button
-          additionalClasses="absolute w-50 top-10 left-10"
+          additionalClasses="absolute top-10 w-50 md:right-[500px]"
           onClick={handleBookMark}
           icon={Bookmark}
+          label="Bookmark"
         />
 
         <div
@@ -177,20 +207,26 @@ export default function Home() {
           }}
         ></div>
         <DraggableDiv stickyNote={stickyNote}></DraggableDiv>
+        <DraggableRecorder
+          Recorder={recorder}
+          audioUrlArray={audioUrlArray}
+          setAudioUrlArray={setAudioUrlArray}
+        ></DraggableRecorder>
+        <DraggableAnnotation annotations={annotations}></DraggableAnnotation>
         <div
           className="relative mx-auto flex justify-center my-auto "
           style={{ width: size.width * 2 }}
         >
           <HTMLFlipBook
             startZIndex={10}
-            flippingTime={1000}
+            flippingTime={900}
             swipeDistance={5}
             useMouseEvents={true}
             usePortrait={true}
-            onChangeState={(e) => console.log(e, "onchange")}
-            onChangeOrientation={(e) => console.log(e, "onorientation")}
-            onInit={(e) => console.log(e, "oninit")}
-            onUpdate={(e) => console.log(e, "onupdate")}
+            onChangeState={(e) => null}
+            onChangeOrientation={(e) => null}
+            onInit={(e) => null}
+            onUpdate={(e) => null}
             autoSize={true}
             style={{}}
             clickEventForward={true}
@@ -231,43 +267,102 @@ export default function Home() {
               <Image
                 className="absolute -left-14 bottom-2/4 hover:scale-110"
                 src={Previous}
-                width={size.width / 7}
-                height={size.width / 7}
+                width={size.width / 5}
+                height={size.width / 5}
                 alt="Previous"
               ></Image>
             </button>
           )}
-          <button onClick={handleNext}>
-            <Image
-              className="absolute -right-14 bottom-2/4 hover:scale-110"
-              src={Next}
-              width={size.width / 7}
-              height={size.width / 7}
-              alt="next"
-            ></Image>
-          </button>
+          {currentPage < pageLimit.length - 1 && (
+            <button onClick={handleNext}>
+              <Image
+                className="absolute -right-14 bottom-2/4 hover:scale-110"
+                src={Next}
+                width={size.width / 5}
+                height={size.width / 5}
+                alt="next"
+              ></Image>
+            </button>
+          )}
         </div>
       </div>
       <div className="absolute bottom-0 z-10 w-full" style={{ zIndex: 1000 }}>
-        <div className=" h-14 w-full md:w-[1200px] relative mx-auto ">
+        <div className=" h-14 w-full md:w-[800px] relative mx-auto ">
           <div
             className="absolute bottom-6 left-0 h-20 w-full bg-[#182d06]  shadow-2xl"
             style={{ clipPath: "polygon(9% 2%, 91% 2%, 101% 100%, -1% 100%)" }}
           ></div>
 
           <div
-            className="absolute bottom-8 left-0 h-20 w-full bg-[#2d5906] flex flex-row justify-center md:gap-4 py-2"
+            className="absolute bottom-8 left-0 h-20 w-full bg-[#2d5906] flex flex-row justify-center md:gap-2 py-2"
             style={{ clipPath: "polygon(10% 0, 90% 0, 100% 100%, 0 100%)" }}
           >
-            <Button onClick={handleAuto} icon={autoplay ? Pause : Play} />
-            <Button onClick={handleZoomIn} icon={ZoomIn} />
-            <Button onClick={handleZoomOut} icon={ZoomOut} />
-            <Button onClick={handleResetView} icon={RotateCcw} />
-            <Button onClick={flipToPage} icon={BookMarked} />
-            <Button onClick={handleSpotlight} icon={Lightbulb} />
-            <Button onClick={handleFullscreenToggle} icon={FullscreenIcon} />
-            <Button onClick={toggleStickyNote} icon={StickyNote} />
+            <Button
+              label={"Autoplay"}
+              onClick={handleAuto}
+              icon={autoplay ? Pause : Play}
+            />
+            <Button label={"Zoom In"} onClick={handleZoomIn} icon={ZoomIn} />
+            <Button label={"Zoom Out"} onClick={handleZoomOut} icon={ZoomOut} />
+            <Button
+              label={"Reset view"}
+              onClick={handleResetView}
+              icon={RotateCcw}
+            />
+            <Button
+              label={"Home page"}
+              onClick={() => goToPage(0)}
+              icon={HomeIcon}
+            />
+            <Button
+              label={"Contents"}
+              onClick={() => goToPage(3)}
+              icon={TableOfContents}
+            />
+            <Button
+              label={"Bookmarked"}
+              onClick={flipToPage}
+              icon={BookMarked}
+            />
+            <Button
+              label={"Spotlight"}
+              onClick={handleSpotlight}
+              icon={Lightbulb}
+            />
+            <Button
+              label={"Fullscreen"}
+              onClick={handleFullscreenToggle}
+              icon={FullscreenIcon}
+            />
+            <Button
+              label={"Sticky notes"}
+              onClick={toggleStickyNote}
+              icon={StickyNote}
+            />
+            <Button
+              label={"Annotations"}
+              onClick={toggleAnnotations}
+              icon={SquarePen}
+            />
+            <Button label={"Recording"} onClick={toggleRecorder} icon={Mic} />
           </div>
+        </div>
+        <div className="absolute right-36 bottom-8 flex">
+          <input
+            type="text"
+            className="border rounded-l-full  w-20 h-8 px-2 "
+            value={pageSearch}
+            onChange={(e) => setPageSearch(e.target.value)}
+            style={{ outline: "none", border: "none" }}
+            placeholder={`${currentPage - 1} - ${currentPage}`}
+          />
+          <button
+            className={`bg-yellow-500 rounded-r-full w-12 h-8  flex items-center justify-center`}
+            style={{ boxShadow: "0 40px 30px rgba(0, 0, 0, 0.8)" }}
+            onClick={handleSearch}
+          >
+            <Search className="text-orange-800" />
+          </button>
         </div>
       </div>
     </>
