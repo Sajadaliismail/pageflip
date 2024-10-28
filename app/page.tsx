@@ -19,7 +19,7 @@ import Button from "./components/Button";
 
 export default function Home() {
   const pageLimit = new Array(100).fill(0).map((_, index) => index + 1);
-  const bookRef = useRef<null | any>(null);
+  const bookRef = useRef<null | HTMLFlipBook>(null);
   const [autoplay, setAutoplay] = useState<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [spotlight, setSpotLight] = useState<boolean>(false);
@@ -120,6 +120,7 @@ export default function Home() {
       bookRef.current.pageFlip()?.flip(currentPage);
     }
   }, [size]);
+
   useEffect(() => {
     document.addEventListener("mousemove", handleMouseMove);
     return () => {
