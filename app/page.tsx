@@ -19,7 +19,8 @@ import Button from "./components/Button";
 
 export default function Home() {
   const pageLimit = new Array(100).fill(0).map((_, index) => index + 1);
-  const bookRef = useRef<null | HTMLFlipBook>(null);
+  // eslint-disable-next-line
+  const bookRef = useRef<HTMLFlipBook | null>(null);
   const [autoplay, setAutoplay] = useState<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [spotlight, setSpotLight] = useState<boolean>(false);
