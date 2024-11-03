@@ -5,9 +5,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "iameonline.com",
+        hostname: "picsum.photos",
         port: "",
-        pathname: "/books/class-1/bubbles-class-1-sem-2/pages/**",
+        pathname: "/**",
       },
     ],
   },

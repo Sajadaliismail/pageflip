@@ -214,7 +214,7 @@ export default function Home() {
         ></DraggableRecorder>
         <DraggableAnnotation annotations={annotations}></DraggableAnnotation>
         <div
-          className="relative mx-auto flex justify-center my-auto "
+          className="relative mx-auto flex justify-center my-auto rounded-lg"
           style={{ width: size.width * 2 }}
         >
           <HTMLFlipBook
@@ -238,7 +238,7 @@ export default function Home() {
             width={size.width}
             height={size.height}
             startPage={currentPage}
-            className="shadow-2xl rounded-md relative w-full"
+            className="shadow-2xl rounded-lg relative w-full"
             key={`${size.height} ${size.width}`}
             drawShadow={true}
             ref={bookRef}
@@ -250,9 +250,9 @@ export default function Home() {
             onFlip={(e) => setCurrentPage(e.data)}
           >
             {pageLimit.map((page) => (
-              <div key={page} className="h-full w-full">
+              <div key={page} className="h-full w-full rounded-md">
                 <Image
-                  src={`https://iameonline.com/books/class-1/bubbles-class-1-sem-2/pages/${page}.jpg`}
+                  src={`https://picsum.photos/400/600?id=${page}`}
                   alt={`Page ${page}`}
                   width={size.width}
                   height={size.height}
@@ -265,7 +265,7 @@ export default function Home() {
           {currentPage > 0 && (
             <button onClick={handlePrev}>
               <Image
-                className="absolute -left-14 bottom-2/4 hover:scale-110"
+                className="absolute -left-14 bottom-2/4 hover:scale-110 rounded-md"
                 src={Previous}
                 width={size.width / 5}
                 height={size.width / 5}
